@@ -1,33 +1,22 @@
 double m = 0.314;
-
-double g = 9.8;
-
+double g = -9.81;
 double Lb = 0.6400;
 double I =  (m * (Lb^2)/12);
 double o = Lb^2;
 double n = I + (m * o);
 double d = 0.05;
-
 double q = n^2;
 
-
-
-double A[3][3] = {{0, 1, 0}, {-((m*g*Lb)/n), (-d/n), 0},  {0, 0, 0}};
+double A[3][3] = {{0, 1, 0}, {((m*g*Lb)/n), (-d/n), 0},  {0, 0, 0}};
 
 double B[3] = {((m*Lb)/n), (-(d*m*Lb)/q), 1};
 
 double C[3] = {1, 0, 0};
 
-
-
 // ENTER YOUR VALUES FOR THE SFC GAINS HERE 
 
 double K[3] = {59.3730, 13.6147, -51.7463};
 
-
-
 // ENTER YOUR VALUES FOR THE OBSERVER GAINS HERE
-
-// observer gain just for theta and thetadot
 
 double L[2] = {41.6411, 31.0414};
