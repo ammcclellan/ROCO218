@@ -1,0 +1,66 @@
+% clean up matlab before launching script
+clear all
+close all 
+clc
+
+% pendulum point mass
+m = 0.314;
+
+% cart mass
+M = 2;
+
+% pendulum length
+L = 0.64;
+
+% acceleration due to gravity
+g = -9.81;
+
+% damping
+d = 1;
+
+% time steps of 100ms for integration
+timeStep = 0.1;
+% total time for simulation
+totalTime = 4;
+% build timepoint vector
+tspan = 0.1:timeStep:totalTime;
+
+titleMessage = 'uncontrolled nonlinear sim of FC pendulum on cart';
+disp(titleMessage)
+
+% initial conditions
+% located at x=0
+% velocity =0
+% angle  pi (inverted)
+% angular velocity = 0.5 rads-1
+y0 = [pi; 0.01;];
+cv = 0.05 ;
+I = (m*(L)^2/12);
+ds = I + m*(L)^2;
+A = [0 1; m*g*L/ds (-d)/ds;];
+B = [m*L/ds; (-(d*m*L)/(ds^2));];
+C = [1 0;];
+D = [0];
+PosX = 4 * [-2.0 -2.1];
+K = place(A,B,PosX);
+disp(K);
+
+% use ode to solve with FCPendOnCart with no control force input u
+% representing a force controlled pendulum on a cart
+% model introduces slight amount of noise to wont stay balanced
+%[t,y] = ode45(@(t,y)SSSimulate(y, A, B, (-K * y)),tspan,y0);
+[Xout,t] = EulerS(A, B, C, D, K, tspan, y0);
+
+% for all time point animate the results
+range=1;
+len = length(tspan);
+kickFlag = zeros(1,len);
+
+% get variables
+x = 0 * Xout(1, :);    % cart positon
+th = Xout(1, :);   % pendulum angle
+
+% animate pendulum
+figure
+AnimatePendulumCart(th+pi,  x, L/2, tspan, range, kickFlag, titleMessage);
+plot(t,Xout);
