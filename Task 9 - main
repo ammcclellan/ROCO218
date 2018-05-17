@@ -1,0 +1,91 @@
+clear all
+close all 
+clc
+
+% pendulum point mass
+
+m = 0.314;
+
+% cart mass
+M = 2;
+
+% pendulum length
+
+L = 0.64;
+
+% acceleration due to gravity
+
+g = -9.81;
+
+
+% damping
+
+d = 0.05;
+
+% time steps of 100ms for integration
+
+timeStep = 0.01;
+
+% total time for simulation
+
+totalTime = 1;
+
+% build timepoint vector
+
+tspan = 0.01:timeStep:totalTime;
+titleMessage = 'uncontrolled nonlinear sim of FC pendulum on cart';
+
+disp(titleMessage)
+
+% initial conditions
+% located at x=0
+% velocity =0
+% angle  pi (inverted)
+% angular velocity = 0.5 rads-1
+
+y0 = [pi; 0; 2]; %pi/2; 0; Changing any number from 0 to anything introduces noise.
+I =  (m * (L^2)/12);
+o = L^2;
+
+n = I + (m * o);
+q = n^2;
+
+A = [0 1 0; -((m*g*L)/n) (-d/n) 0; 0 0 0;];
+B = [((m*L)/n); (-(d*m*L)/q); 1;];
+C = [1 0 0;];
+D = [0];
+C2 = [1 0 ;];
+A2 = [0 1; -((m*g*L)/n) (-d/n);];
+
+
+PosX = 4 * [-2 -2.2 -2.6];
+K = place(A, B, PosX);
+disp(K);
+
+
+PosX = 20*[-1 -1.1];
+Lb = place(A2, C2', PosX);
+disp(Lb);
+
+% use ode to solve with FCPendOnCart with no control force input u
+% representing a force controlled pendulum on a cart
+% model introduces slight amount of noise to wont stay balanced
+
+[Xout,t] = EulerS(A, B, C, D, K, Lb, tspan, y0);
+
+% for all time point animate the results
+
+range=1;
+len = length(tspan);
+kickFlag = zeros(1,len);
+
+% get variables
+
+x = 0 * Xout(1,:);    % cart positon 0 stops, 1 moves
+th = 1 * Xout(1,:);   % pendulum angle
+
+% animate pendulum
+
+figure
+AnimatePendulumCart(th+pi,  x, L/2, tspan, range, kickFlag, titleMessage);
+%plot(t,Xout);
