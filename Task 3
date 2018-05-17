@@ -1,0 +1,51 @@
+
+clear all
+close all 
+clc
+
+% pendulum point mass
+
+m = 0.314;
+
+% cart mass
+
+M = 2;
+
+
+% pendulum length
+
+L = 0.64;
+
+% acceleration due to gravity
+
+g = -9.81;
+cv = 0.05;
+I =  (m * (L^2)/12);
+o = L^2;
+
+n = I + (m * o);
+q = n^2;
+
+A = [0 1; -((m*g*L)/n) (-cv/n);];
+B = [((m*L)/n); (-(cv*m*L)/q);];
+C = [1 0;];
+D = [0];
+
+
+CA = C*A;
+
+MXo = [C; CA;]
+
+rank(MXo)
+
+%its rank is 2 and is observable
+AB = A*B;
+MXc = [B AB;]
+rank(MXc)
+%its rank is 2 and is observable
+
+
+
+eig(A)
+
+%this is unstable (positive eigen value)
