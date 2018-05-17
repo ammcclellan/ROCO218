@@ -1,0 +1,28 @@
+function    [Xout, t] = EulerS(A, B, C, D, K, t, x1)
+len = length(t);
+y = zeros(1,len);
+Xout = zeros(2,len);
+
+Xout(:, 1) = x1;
+x = x1;
+
+%calculate the first value from initial conditions
+u(1) = C(1)* x(1) + C(2) * x(2);
+
+%assigning the output of the system (the angle of the pendulum)
+y(1) = C(1) * x(1) + C(2) * x(2) + D(1) * u(1);
+
+for idx = 2:len
+    u(idx) = -K(1) * x(1) - K(2) * x(2);
+    h = t(idx) - t(idx-1);
+    
+    xdot(1) = A(1,1) * x(1) + A(1,2) * x(2) + B(1) *u(idx);
+    xdot(2) = A(2,1) * x(1)+ A(2,2) * x(2) + B(2) * u(idx);
+    
+    x(1) = x(1) + h * xdot(1);
+    x(2) = x(2) + h *xdot(2);
+    
+    %register states
+    Xout(:,idx) = x;
+    y(idx) = C(1) * x(1) + C(2) * x(2) + D(1) * u(idx);
+end
