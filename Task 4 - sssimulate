@@ -1,0 +1,3 @@
+function xDot = SSSimulate(X, A, B, U)
+xDot = A*X + B*U;
+end
