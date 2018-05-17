@@ -1,0 +1,49 @@
+function  [Xhout,t] = EulerS(A, B, C, D, K, Lb, t, x0)
+
+len = length(t);
+y = zeros(1,len);
+Xout = zeros(3,len);
+Xout(:, 1) = x0;
+x = x0;
+
+YCo = zeros(1,len);
+Xhout = zeros(3,len);
+Xhout(:, 1) = x0;
+Xh = x0;
+
+
+u(1) = -K(1) * Xh(1) - K(2) * Xh(2);
+y(1) = C(1) * x(1) + C(2) * x(2) + C(3) * x(3) + D(1) * u(1);
+
+
+for idx = 2:len
+
+    u(idx) = -K(1) * Xh(1) - K(2) * Xh(2) - K(3) * Xh(3);
+    h = t(idx) - t(idx-1);
+
+    Xdot(1) = A(1,1) * x(1) + A(1,2) * x(2) + B(1) * u(idx);
+    Xdot(2) = A(2,1) * x(1) + A(2,2) * x(2) + B(2) * u(idx);
+    Xdot(3) = B(3) * u(idx);
+    
+    x(1) = x(1) + h * Xdot(1);
+    x(2) = x(2) + h * Xdot(2);
+    x(3) = x(3) + h * Xdot(3);
+    
+    Xout(:,idx) = x;
+    y(idx) = C(1) * x(1) + C(2) * x(2) + C(3)* x(3) + D(1) * u(idx);
+
+    
+    correction = (y(idx) - C(1) * Xh(1) - C(2) * Xh(2) - C(3) *Xh(3));
+    
+    Xhdot(1) = A(1,1) * Xh(1) + A(1,2) * Xh(2) + B(1) * u(idx) + correction * Lb(1);
+    Xhdot(2) = A(2,1) * Xh(1) + A(2,2) * Xh(2) + B(2) * u(idx) + correction * Lb(2);
+    Xhdot(3) = A(3,1) * Xh(1) + A(3,2) * Xh(2) + B(3) * u(idx);
+    
+    Xh(1) = Xh(1) + h * Xhdot(1);
+    Xh(2) = Xh(2) + h * Xhdot(2);
+    Xh(3) = Xh(3) + h * Xhdot(3);
+
+    Xhout(:,idx) = Xh;
+
+    
+end
